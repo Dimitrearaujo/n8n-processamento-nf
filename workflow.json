@@ -1,0 +1,767 @@
+﻿{
+  "name": "Notas Fiscais OpenIA Ok",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2144,
+        64
+      ],
+      "id": "your-uuid-here",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "your-uuid-here",
+              "leftValue": "={{ $binary.attachment_0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1936,
+        64
+      ],
+      "id": "your-uuid-here",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        48
+      ],
+      "id": "your-uuid-here",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1376,
+        0
+      ],
+      "id": "your-uuid-here",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -992,
+        400
+      ],
+      "id": "your-uuid-here",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "your-uuid-here",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -496,
+        176
+      ],
+      "id": "your-uuid-here",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "your-uuid-here",
+              "leftValue": "={{ $json.output.tipo }}",
+              "rightValue": "corporativo",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -336,
+        176
+      ],
+      "id": "your-uuid-here",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.output.nome_sugerido_arquivo }}",
+        "driveId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/0/folders/1ykUDjpLA8yrjmvoNerhzOBtrf-igYDmS",
+          "mode": "url"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/0/folders/1ykUDjpLA8yrjmvoNerhzOBtrf-igYDmS",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        32,
+        32
+      ],
+      "id": "your-uuid-here",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Drive account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.output.nome_sugerido_arquivo }}",
+        "driveId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/0/folders/1bsM68bpn6o21pnW0IhLf2CghxMqkHo7e",
+          "mode": "url"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/u/0/folders/1bsM68bpn6o21pnW0IhLf2CghxMqkHo7e",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        32,
+        272
+      ],
+      "id": "your-uuid-here",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Drive account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1-_vzvRYtdEYeSmh2Z4MSWDBb0oLfryriK22CjI2kBLQ/edit?gid=625168262#gid=625168262",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 625168262,
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-_vzvRYtdEYeSmh2Z4MSWDBb0oLfryriK22CjI2kBLQ/edit#gid=625168262"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data da Fatura": "={{ $('Edit Fields1').item.json.output.data_fatura }}",
+            "Fornecedor": "={{ $('Edit Fields1').item.json.output.fornecedor }}",
+            "Valor": "={{ $('Edit Fields1').item.json.output.valor }}",
+            "Moeda": "={{ $('Edit Fields1').item.json.output.moeda }}",
+            "Impostos": "={{ $('Edit Fields1').item.json.output.impostos }}",
+            "Número da Fatura": "={{ $('Edit Fields1').item.json.output.numero_fatura }}",
+            "Categoria": "={{ $('Edit Fields1').item.json.output.categoria }}",
+            "Corporativo ou Pessoal": "={{ $('Edit Fields1').item.json.output.tipo }}",
+            "Método de Pagamento": "={{ $('Edit Fields1').item.json.output.metodo_pagamento }}",
+            "E-mail de Origem": "={{ $('Gmail Trigger').item.json.from.value[0].address }}",
+            "URL do Arquivo": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data da Fatura",
+              "displayName": "Data da Fatura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YOUR_CREDENTIAL_ID",
+              "displayName": "Fornecedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Valor",
+              "displayName": "Valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Moeda",
+              "displayName": "Moeda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Impostos",
+              "displayName": "Impostos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Número da Fatura",
+              "displayName": "Número da Fatura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Categoria",
+              "displayName": "Categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Corporativo ou Pessoal",
+              "displayName": "Corporativo ou Pessoal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Método de Pagamento",
+              "displayName": "Método de Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL do Arquivo",
+              "displayName": "URL do Arquivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "E-mail de Origem",
+              "displayName": "E-mail de Origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        144
+      ],
+      "id": "your-uuid-here",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Exatamente. Com essa instrução, a IA usará a capacidade de inferência dela para classificar a nota com base nas palavras-chave encontradas no texto, mesmo que a palavra \"categoria\" não esteja escrita no documento.\n\nPara garantir que ela não se perca quando o serviço for ambíguo, fiz um ajuste fino na instrução de categoria abaixo para cobrir esses casos \"implícitos\".\n\nCopie e cole esta versão final:\nVocê é um assistente de extração de dados. Sua tarefa é processar o texto abaixo e transformá-lo em um JSON seguindo regras estritas.\n\nTEXTO PARA ANÁLISE:\n{{ $json.text }}\n\nREGRAS CRÍTICAS DE FORMATO:\n\nA resposta DEVE ser um JSON VÁLIDO, PURO, INICIANDO com { e TERMINANDO com }.\n\nNÃO use ```json, NÃO use crases, NÃO use texto antes ou depois.\n\nNÃO use quebras de linha fora do JSON.\n\nCAMPOS DO JSON:\n{\n\"data_fatura\": string | null,\n\"fornecedor\": string | null,\n\"valor\": number | null,\n\"moeda\": string | null,\n\"impostos\": number | null,\n\"numero_fatura\": string | null,\n\"categoria\": string | null,\n\"tipo\": \"corporativo\" | \"pessoal\" | null,\n\"metodo_pagamento\": string | null,\n\"nome_sugerido_arquivo\": string\n}\n\nLÓGICA PARA CATEGORIA (INFERÊNCIA):\n\nAnalise o item ou fornecedor: Se o serviço não estiver explícito, deduza a categoria mais lógica.\n\nExemplos: Se ler \"hambúrguer\" ou \"restaurante\" -> \"Alimentação\". Se ler \"corrida\" ou \"km\" -> \"Transporte\". Se ler \"AWS\", \"Google\" ou \"Cloud\" -> \"Infraestrutura/TI\". Se ler \"Papelaria\" -> \"Suprimentos\".\n\nSe for impossível deduzir, use \"Outros\".\n\nDIRETRIZES DE FORMATAÇÃO:\n\nDatas: YYYY-MM-DD.\n\nValores: Apenas número com ponto decimal.\n\nNome Sugerido: Data_Fornecedor_Valor.pdf (Ex: 2025-04-05_Netflix_55-90.pdf). Use \"_\" nos espaços e \"-\" no lugar do ponto do valor.\n\nREGRAS DE TIPO (PRIORIDADE):\n\nCliente menciona \"Hashtag Treinamentos\" -> \"corporativo\".\n\nNetflix, iFood, Uber ou uso doméstico -> \"pessoal\".\n\nServiços empresariais/B2B -> \"corporativo\".\n\nGere a resposta FINAL em JSON PURO agora.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -944,
+        176
+      ],
+      "id": "your-uuid-here",
+      "name": "AI Agent",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "your-uuid-here",
+              "name": "data",
+              "value": "={{ Object.keys($binary)[0] }}",
+              "type": "binary"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1152,
+        16
+      ],
+      "id": "your-uuid-here",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "={{ Object.keys($binary)[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -912,
+        -96
+      ],
+      "id": "your-uuid-here",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -656,
+        -16
+      ],
+      "id": "your-uuid-here",
+      "name": "Merge2"
+    }
+  ],
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "threadId": "19dbd345ceb5e13f",
+          "labelIds": [
+            "UNREAD",
+            "CATEGORY_PERSONAL",
+            "INBOX"
+          ],
+          "sizeEstimate": 36427,
+          "headers": {
+            "delivered-to": "Delivered-To: dimitrearaujo@gmail.com",
+            "received": "Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])\r\n        by mx.google.com with SMTPS id 006d021491bc7-6965b90cadcsor9320eaf.1.2026.04.27.10.54.00\r\n        for <dimitrearaujo@gmail.com>\r\n        (Google Transport Security);\r\n        Mon, 27 Apr 2026 10:54:00 -0700 (PDT)",
+            "x-received": "X-Received: by 2002:a05:6820:4b09:b0:687:d51c:e637 with SMTP id\r\n 006d021491bc7-6965b9078a9mr21157eaf.7.1777312439259; Mon, 27 Apr 2026\r\n 10:53:59 -0700 (PDT)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1777312439; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=S6OMuf67FKMLZPzAAfCMdRwkzDWe52Q8MBdvYV690o318VqfbvbJTkgveGbAV63jGa\r\n         bE4v1d0G1Z21LK6GSXQSE8eFJ0ayZ82+N2nnrgHi5PvrjZjTXjZd4Ox62nVwZNayyyVz\r\n         3L1aiAea/X2akf6BwDoOMNHhx1j0WyZwEvLLrEpvQ7URjB9iQ9OCL5wAkovMSIIfMYu3\r\n         XyP8xoZzvN9IDhrO2BlEGkKhQhZ87deIw9Msf3rUk3cOtbjS9Q3L8ea9tHPocU6bFOZ1\r\n         gbJCnGfrRr30f+p93AAGCJG623aeC/FdT4uK1wk4NL9SFP0zd2HT/6XME/SARJKTmuzR\r\n         6KRw==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :dkim-signature;\r\n        bh=EQdmjVbUIEH5w7PKVvSC77QCIn1ace+tbLQEXedzb88=;\r\n        fh=TBrwMTo5OHyBOCJNtXY+NXWGlPqnvzWDw/wyfAVWvco=;\r\n        b=Q4EWXygbdHIKSjpxbR8Kf6bnluPfRTSvK8WBTigLS2cfi3jiX6fma5JACIZIQinrTu\r\n         lMIexxxVZey4wx9Ek7InV2rJayFhQho5J4/dVBySr6YcxFSIAs826EJ1Wa1IAo67roQ4\r\n         RtrxLGwiE8SV+s2+ewAI/cT9bYpJVVyM//kNjOTtaL4a1bf+Bs7d1A4tdE1FNEc/emsq\r\n         jdlhOa3YoLuQPE684EMCr3NqqGiYXQlN3czRnaHH8ux/4a59EJsdFZ11r8QVqmt33shk\r\n         nUwUk9PG74cb/LWvnJCk1Zr0PhaUd+N3boqTgNS/CE95Xb4NxYGpy2CCT9HlQCB6lRtA\r\n         YE8g==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com; arc=none",
+            "return-path": "Return-Path: <dimitre.ra@gmail.com>",
+            "received-spf": "Received-SPF: pass (google.com: domain of dimitre.ra@gmail.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@gmail.com header.s=20251104 header.b=Bj5eQp9d;\r\n       arc=pass (i=1);\r\n       spf=pass (google.com: domain of dimitre.ra@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dimitre.ra@gmail.com;\r\n       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;\r\n       dara=pass header.i=@gmail.com",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=gmail.com; s=20251104; t=1777312439; x=1777917239; dara=google.com;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :from:to:cc:subject:date:message-id:reply-to;\r\n        bh=EQdmjVbUIEH5w7PKVvSC77QCIn1ace+tbLQEXedzb88=;\r\n        b=Bj5eQp9dVWhjo7wksPz9zCqEe0sStibNMSh+yc4p0n2m+gRtecwVo+KIQuT1KSuPaV\r\n         g/46tpXg0RSHjxhgNtDE14mOeCzs/NZ0YagCITqo+/PDZeFr2SQeLSlV92YOjMvcM/Do\r\n         ePFUvxEJcvLnOLS2xhkH2fp997kSZJyApnS9k+E43QAEtMsKckg5SvYCAPPvnpncNh77\r\n         NTFUBsINpFk/oCxYmvg5jD7NkMBql4pqFxzI4LmmAGcOD/lU4f5i2ScHaVMKnZrVZ6+4\r\n         4Q9ac8UAOqkukFjAPBKjBlzv7Z+e+Vlo6sAU9SzgeoCsgFPiBGX1Dsojx5K+egSPQ8g/\r\n         8UOw==",
+            "x-google-dkim-signature": "X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;\r\n        d=1e100.net; s=20251104; t=1777312439; x=1777917239;\r\n        h=to:subject:message-id:date:from:in-reply-to:references:mime-version\r\n         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id\r\n         :reply-to;\r\n        bh=EQdmjVbUIEH5w7PKVvSC77QCIn1ace+tbLQEXedzb88=;\r\n        b=N/fmetYWsRXg8x9gEJKzIy0NxBByBDGJP9e2MkT4l8lVO0JQAdDASjlWi+rGuCpTd9\r\n         lO0hsCfmLBUO7QGYiCpQjap5WVo/vG9R8r/5WzEh/EmlFYPSubH5DOzB4uVVMXkNuhoP\r\n         /mSXvrkhaEzlL8YUtpeBbOAZKA2kZF3jvVNVr4S9ssxhbNsKt2LZ5es+7YzDKpeT9NZn\r\n         adgPbMZQHAIH8UFCYVjeu/xuqfZeBuv/JfF8zPBRl7ekXbpCCdEpH7lEM+VrzeJDzfr/\r\n         814Zd19BIRZ3XabRA0J5RGDUsfE7bcRZKgCwk9LEU4OOy2QPk3qBTbyrkkHo3muY81qE\r\n         o0Gw==",
+            "x-gm-message-state": "X-Gm-Message-State: AOJu0YzMnVKJI9QtqGF9qIQ3sB6+RXWL7WEteVtm0krAAPyOnXUJgtpn\r\n\toHFmSj1fP/t/Govp7pW0TnX+T75ZgBER8QON9z4wkACJqcmANlg164+tbb0oFw2RcDqut9eJUwU\r\n\tg+gyPD+xgZzMEcVuZU8HH2dp7MeVffwglfQ==",
+            "x-gm-gg": "X-Gm-Gg: AeBDievitgT4oGxf+0AdGVjCD9KYX6JCKtyf6l6jEJ1uZEQNcK87vTGdu1NZYccD0Sg\r\n\tHST4rBFftgFOhbpIFbRC5SW/oKC6PLFtaQhvc1NZHxaF+8ySO9j5pprYzqueZbI0Lh7fDI7QH5l\r\n\t2bgBpIkZzxQ2cIFK6dXCoBkPpNSBwPOJeESgO//g5LZLPF2ZHhUdwPx0tgdiInXxirDxHHhtvo8\r\n\t5Yh5dkG4MdM504NEup+3Fb9H/aEgAHKRPF2lKp/MbvuVVcp2BSeLKnLECXp5pe8KKmOaWqtLIBs\r\n\tF1VaxdRri7Af31QmM66Aw5WITidCB7QLCRfrP6i36qHN5TuQQyUM",
+            "mime-version": "MIME-Version: 1.0",
+            "references": "References: <CAFmVN+_7zxy5hhEx-KgO=v5AznuH45uYNXHyHx1Mh8ViTcxA+A@mail.gmail.com>\r\n <CAFmVN+88vOQxsbejednoxE=0SdJtm-6Zycse9m=TYeurNQXANA@mail.gmail.com>\r\n <CAFmVN+8KAoGNcvq7oZdF7T+jdJtC7H+hQrYMj6rRgoetJ01TMQ@mail.gmail.com>\r\n <CAFmVN+9NiaaSBtE=B3hPTeSjBYyDO4pmajFUG_2GBxz_s-X47w@mail.gmail.com>\r\n <CAFmVN+_mgJW4DH=hNare7Kryq60GhAuVHrDTJ62ab77g7v6AFA@mail.gmail.com>\r\n <CAFmVN+-BQdhzEDx0ngZnxYbJ=6Y7Pq=oah7jbkxs+998GYyZVw@mail.gmail.com>\r\n <CAFmVN+-s-47xoPZcOW+vQaXhMHo_zXyhoZ5q=WJZf95E1MLVfg@mail.gmail.com>\r\n <CAFmVN+9gW1yo+_T9fp6F=60_Ln1uuBYyLd+QfRUa=E6iMkXsBw@mail.gmail.com>\r\n <CAFmVN+9og3pYGnpM0RugbGG-LJf4LWS=zbiQ4uSvVv8OrxvjgQ@mail.gmail.com>\r\n <CAFmVN+8i6BL5kfGH7NxOEjy9PvEZVA0Tpe54GOv47OAWozPCBQ@mail.gmail.com>\r\n <CAFmVN+9jPLsR56ai+MHqC3qBeBV=E2ECMEaGbSPTGnqSZJ9HDA@mail.gmail.com>\r\n <CAFmVN+-bTpMoPr+M9Ggur0+Fajt6GYGXybvTgtzKKfN5e8W3FQ@mail.gmail.com>\r\n <CAFmVN+8anaRFmWSkixu6cyH_o8JftRKVDbX+-rOx8B3jrzjZAw@mail.gmail.com>\r\n <CAFmVN+-ij+U92AT+6FuE7L05MsK88=uo9LAZBm5zBqmk1NMJ=g@mail.gmail.com>\r\n <CAFmVN+9SBLZqNa6_MV+prpEwbrarn8Nj9Q2Jmcsr8xSe4515wQ@mail.gmail.com>\r\n <CAFmVN+_euB7mYn_chgQ91nZz6x3qcdLTW0FN3oHOdqNTAysyhA@mail.gmail.com>\r\n <CAFmVN+8M3vsLv+FV529u3naZsZjVTw1feuiX6ieaz=gghJDTbA@mail.gmail.com>\r\n <CAFmVN+-2ZMpR5C7NFK_+M9t9+WxaV-OqHiA82wp=_B7ZnMS+EA@mail.gmail.com> <CAFmVN+_YHGPqxKMofS0S543=sLuX34vYFe729ECq3jXK0FUncQ@mail.gmail.com>",
+            "in-reply-to": "In-Reply-To: <CAFmVN+_YHGPqxKMofS0S543=sLuX34vYFe729ECq3jXK0FUncQ@mail.gmail.com>",
+            "from": "From: Carlos Dimitre <dimitre.ra@gmail.com>",
+            "date": "Date: Mon, 27 Apr 2026 14:53:45 -0300",
+            "x-gm-features": "X-Gm-Features: AVHnY4IalDgRxjSHT6LVYiXc8VJeQAClbh9mxCOLZkT92Yi2EYKqAOktQMqLU3k",
+            "message-id": "Message-ID: <CAFmVN+-KRA3xXCjFCQjkwUZqXuSKZZmG4maxTBLLr6Wnr5bskg@mail.gmail.com>",
+            "subject": "Subject: Fwd: Notas fiscais do mes",
+            "to": "To: dimitrearaujo@gmail.com",
+            "content-type": "Content-Type: multipart/mixed; boundary=\"00000000000099a3f9065074cc41\""
+          },
+          "html": "<div dir=\"ltr\"><br><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: seg., 27 de abr. de 2026 às 12:09<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: seg., 27 de abr. de 2026 às 11:57<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: seg., 27 de abr. de 2026 às 11:37<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: seg., 27 de abr. de 2026 às 11:05<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: seg., 27 de abr. de 2026 às 10:34<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: seg., 27 de abr. de 2026 às 09:10<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 13:16<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 12:42<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 12:20<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 11:24<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 11:09<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 10:55<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 10:30<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 10:13<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 10:07<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 10:03<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 09:55<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: sex., 24 de abr. de 2026 às 09:10<br>Subject: Fwd: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\"><br><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">---------- Forwarded message ---------<br>De: <strong class=\"gmail_sendername\" dir=\"auto\">Carlos Dimitre</strong> <span dir=\"auto\">&lt;<a href=\"mailto:dimitre.ra@gmail.com\" target=\"_blank\">dimitre.ra@gmail.com</a>&gt;</span><br>Date: qui., 23 de abr. de 2026 às 22:56<br>Subject: Notas fiscais do mes<br>To:  &lt;<a href=\"mailto:dimitrearaujo@gmail.com\" target=\"_blank\">dimitrearaujo@gmail.com</a>&gt;<br></div><br><br><div dir=\"ltr\">Opa muito boa noite<div>segue em anexo as notas fiscais solicitadas.</div><div>att</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div><div id=\"m_-1942997642961946457m_-8995902284043241206m_-8808104035017284389m_4200424686933345135m_5249439225539903602m_-9086634688431494052DAB4FAD8-2DD7-40BB-A1B8-4E2AA1F9FDF2\"><br><table style=\"border-top:1px solid #d3d4de\"><tbody><tr><td style=\"width:55px;padding-top:13px\"><a href=\"https://www.avast.com/sig-email?utm_medium=email&amp;utm_source=link&amp;utm_campaign=sig-email&amp;utm_content=webmail\" target=\"_blank\"><img src=\"https://s-install.avcdn.net/ipm/preview/icons/icon-envelope-tick-round-orange-animated-no-repeat-v1.gif\" alt=\"\" width=\"46\" height=\"29\" style=\"width:46px;height:29px\"></a></td><td style=\"width:470px;padding-top:12px;color:#41424e;font-size:13px;font-family:Arial,Helvetica,sans-serif;line-height:18px\">Não contém vírus.<a href=\"https://www.avast.com/sig-email?utm_medium=email&amp;utm_source=link&amp;utm_campaign=sig-email&amp;utm_content=webmail\" style=\"color:#4453ea\" target=\"_blank\">www.avast.com</a></td></tr></tbody></table><a href=\"#m_-1942997642961946457_m_-8995902284043241206_m_-8808104035017284389_m_4200424686933345135_m_5249439225539903602_m_-9086634688431494052_DAB4FAD8-2DD7-40BB-A1B8-4E2AA1F9FDF2\" width=\"1\" height=\"1\"></a></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n</div></div>\n",
+          "text": "---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: seg., 27 de abr. de 2026 às 12:09\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: seg., 27 de abr. de 2026 às 11:57\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: seg., 27 de abr. de 2026 às 11:37\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: seg., 27 de abr. de 2026 às 11:05\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: seg., 27 de abr. de 2026 às 10:34\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: seg., 27 de abr. de 2026 às 09:10\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 13:16\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 12:42\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 12:20\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 11:24\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 11:09\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 10:55\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 10:30\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 10:13\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 10:07\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 10:03\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 09:55\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: sex., 24 de abr. de 2026 às 09:10\nSubject: Fwd: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\n\n\n---------- Forwarded message ---------\nDe: Carlos Dimitre <dimitre.ra@gmail.com>\nDate: qui., 23 de abr. de 2026 às 22:56\nSubject: Notas fiscais do mes\nTo: <dimitrearaujo@gmail.com>\n\n\nOpa muito boa noite\nsegue em anexo as notas fiscais solicitadas.\natt\n\n<https://www.avast.com/sig-email?utm_medium=email&utm_source=link&utm_campaign=sig-email&utm_content=webmail>\nNão\ncontém vírus.www.avast.com\n<https://www.avast.com/sig-email?utm_medium=email&utm_source=link&utm_campaign=sig-email&utm_content=webmail>\n<#m_-1942997642961946457_m_-8995902284043241206_m_-8808104035017284389_m_4200424686933345135_m_5249439225539903602_m_-9086634688431494052_DAB4FAD8-2DD7-40BB-A1B8-4E2AA1F9FDF2>\n",
+          "textAsHtml": "<p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: seg., 27 de abr. de 2026 &agrave;s 12:09<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: seg., 27 de abr. de 2026 &agrave;s 11:57<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: seg., 27 de abr. de 2026 &agrave;s 11:37<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: seg., 27 de abr. de 2026 &agrave;s 11:05<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: seg., 27 de abr. de 2026 &agrave;s 10:34<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: seg., 27 de abr. de 2026 &agrave;s 09:10<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 13:16<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 12:42<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 12:20<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 11:24<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 11:09<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 10:55<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 10:30<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 10:13<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 10:07<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 10:03<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 09:55<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: sex., 24 de abr. de 2026 &agrave;s 09:10<br/>Subject: Fwd: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>---------- Forwarded message ---------<br/>De: Carlos Dimitre &lt;<a href=\"mailto:dimitre.ra@gmail.com\">dimitre.ra@gmail.com</a>&gt;<br/>Date: qui., 23 de abr. de 2026 &agrave;s 22:56<br/>Subject: Notas fiscais do mes<br/>To: &lt;<a href=\"mailto:dimitrearaujo@gmail.com\">dimitrearaujo@gmail.com</a>&gt;</p><p>Opa muito boa noite<br/>segue em anexo as notas fiscais solicitadas.<br/>att</p><p>&lt;<a href=\"https://www.avast.com/sig-email?utm_medium=email&utm_source=link&utm_campaign=sig-email&utm_content=webmail\">https://www.avast.com/sig-email?utm_medium=email&amp;utm_source=link&amp;utm_campaign=sig-email&amp;utm_content=webmail</a>&gt;<br/>N&atilde;o<br/>cont&eacute;m <a href=\"http://vírus.www.avast.com\">v&iacute;rus.www.avast.com</a><br/>&lt;<a href=\"https://www.avast.com/sig-email?utm_medium=email&utm_source=link&utm_campaign=sig-email&utm_content=webmail\">https://www.avast.com/sig-email?utm_medium=email&amp;utm_source=link&amp;utm_campaign=sig-email&amp;utm_content=webmail</a>&gt;<br/>&lt;#m_-1942997642961946457_m_-8995902284043241206_m_-8808104035017284389_m_4200424686933345135_m_5249439225539903602_m_-9086634688431494052_DAB4FAD8-2DD7-40BB-A1B8-4E2AA1F9FDF2&gt;</p>",
+          "subject": "Fwd: Notas fiscais do mes",
+          "references": [
+            "<CAFmVN+_7zxy5hhEx-KgO=v5AznuH45uYNXHyHx1Mh8ViTcxA+A@mail.gmail.com>",
+            "<CAFmVN+88vOQxsbejednoxE=0SdJtm-6Zycse9m=TYeurNQXANA@mail.gmail.com>",
+            "<CAFmVN+8KAoGNcvq7oZdF7T+jdJtC7H+hQrYMj6rRgoetJ01TMQ@mail.gmail.com>",
+            "<CAFmVN+9NiaaSBtE=B3hPTeSjBYyDO4pmajFUG_2GBxz_s-X47w@mail.gmail.com>",
+            "<CAFmVN+_mgJW4DH=hNare7Kryq60GhAuVHrDTJ62ab77g7v6AFA@mail.gmail.com>",
+            "<CAFmVN+-BQdhzEDx0ngZnxYbJ=6Y7Pq=oah7jbkxs+998GYyZVw@mail.gmail.com>",
+            "<CAFmVN+-s-47xoPZcOW+vQaXhMHo_zXyhoZ5q=WJZf95E1MLVfg@mail.gmail.com>",
+            "<CAFmVN+9gW1yo+_T9fp6F=60_Ln1uuBYyLd+QfRUa=E6iMkXsBw@mail.gmail.com>",
+            "<CAFmVN+9og3pYGnpM0RugbGG-LJf4LWS=zbiQ4uSvVv8OrxvjgQ@mail.gmail.com>",
+            "<CAFmVN+8i6BL5kfGH7NxOEjy9PvEZVA0Tpe54GOv47OAWozPCBQ@mail.gmail.com>",
+            "<CAFmVN+9jPLsR56ai+MHqC3qBeBV=E2ECMEaGbSPTGnqSZJ9HDA@mail.gmail.com>",
+            "<CAFmVN+-bTpMoPr+M9Ggur0+Fajt6GYGXybvTgtzKKfN5e8W3FQ@mail.gmail.com>",
+            "<CAFmVN+8anaRFmWSkixu6cyH_o8JftRKVDbX+-rOx8B3jrzjZAw@mail.gmail.com>",
+            "<CAFmVN+-ij+U92AT+6FuE7L05MsK88=uo9LAZBm5zBqmk1NMJ=g@mail.gmail.com>",
+            "<CAFmVN+9SBLZqNa6_MV+prpEwbrarn8Nj9Q2Jmcsr8xSe4515wQ@mail.gmail.com>",
+            "<CAFmVN+_euB7mYn_chgQ91nZz6x3qcdLTW0FN3oHOdqNTAysyhA@mail.gmail.com>",
+            "<CAFmVN+8M3vsLv+FV529u3naZsZjVTw1feuiX6ieaz=gghJDTbA@mail.gmail.com>",
+            "<CAFmVN+-2ZMpR5C7NFK_+M9t9+WxaV-OqHiA82wp=_B7ZnMS+EA@mail.gmail.com>",
+            "<CAFmVN+_YHGPqxKMofS0S543=sLuX34vYFe729ECq3jXK0FUncQ@mail.gmail.com>"
+          ],
+          "date": "2026-04-27T17:53:45.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "dimitrearaujo@gmail.com",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:dimitrearaujo@gmail.com\" class=\"mp_address_email\">dimitrearaujo@gmail.com</a></span>",
+            "text": "dimitrearaujo@gmail.com"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "dimitre.ra@gmail.com",
+                "name": "Carlos Dimitre"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Carlos Dimitre</span> &lt;<a href=\"mailto:dimitre.ra@gmail.com\" class=\"mp_address_email\">dimitre.ra@gmail.com</a>&gt;</span>",
+            "text": "\"Carlos Dimitre\" <dimitre.ra@gmail.com>"
+          },
+          "messageId": "<CAFmVN+-KRA3xXCjFCQjkwUZqXuSKZZmG4maxTBLLr6Wnr5bskg@mail.gmail.com>",
+          "inReplyTo": "<CAFmVN+_YHGPqxKMofS0S543=sLuX34vYFe729ECq3jXK0FUncQ@mail.gmail.com>"
+        },
+        "binary": {
+          "attachment_0": {
+            "mimeType": "application/pdf",
+            "fileType": "pdf",
+            "fileExtension": "pdf",
+            "data": "filesystem-v2",
+            "fileName": "fatura_p_03.pdf",
+            "id": "filesystem-v2:workflows/tbd2XayLAOzSbddd/executions/513/binary_data/b4253c79-a91c-4390-9b7c-c5d5554c1c31",
+            "fileSize": "2.42 kB",
+            "bytes": 2422
+          },
+          "attachment_1": {
+            "mimeType": "application/pdf",
+            "fileType": "pdf",
+            "fileExtension": "pdf",
+            "data": "filesystem-v2",
+            "fileName": "fatura_C.pdf",
+            "id": "filesystem-v2:workflows/tbd2XayLAOzSbddd/executions/513/binary_data/69483618-302f-47ac-bf93-3bb746d5da39",
+            "fileSize": "2.73 kB",
+            "bytes": 2728
+          },
+          "attachment_2": {
+            "mimeType": "application/pdf",
+            "fileType": "pdf",
+            "fileExtension": "pdf",
+            "data": "filesystem-v2",
+            "fileName": "fatura_p_02.pdf",
+            "id": "filesystem-v2:workflows/tbd2XayLAOzSbddd/executions/513/binary_data/571df509-7bde-4f31-b226-78d03f11131e",
+            "fileSize": "2.47 kB",
+            "bytes": 2469
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "your-uuid-here",
+  "meta": {
+    "instanceId": "cb4aab02f60e02d4505f57a5e5ad8ee7f5ba53fe57f867f5b72d629178229ff3"
+  },
+  "id": "YOUR_CREDENTIAL_ID",
+  "tags": []
+}
