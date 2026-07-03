@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate workflow.json
+        run: |
+          python -c "
+          import json, sys, pathlib
+          path = pathlib.Path('workflow.json')
+          if not path.exists():
+              print('workflow.json nao encontrado')
+              sys.exit(1)
+          try:
+              data = json.loads(path.read_text(encoding='utf-8-sig'))
+              nodes = data.get('nodes', [])
+              print(f'workflow.json valido — {len(nodes)} nodes encontrados')
+          except json.JSONDecodeError as e:
+              print(f'JSON invalido: {e}')
+              sys.exit(1)
+          "
