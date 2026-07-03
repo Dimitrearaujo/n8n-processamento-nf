@@ -133,4 +133,68 @@ Menu → Workflows → Import from File → workflow.json → Activate
 
 ---
 
-[← Voltar ao índice](../README.md)
+<details>
+<summary>🇺🇸 English</summary>
+
+# 🧾 Automatic Invoice Processing
+
+> Pipeline that **reads invoice attachments from email**, extracts structured data with AI, organizes the files in **Google Drive** and logs everything to a **Google Sheets** spreadsheet — with no human intervention.
+
+## 📌 What this workflow does
+
+1. **Monitors** Gmail and detects emails with invoice attachments (PDF)
+2. **Extracts** the PDF files from incoming emails
+3. **Analyzes** each invoice with GPT-4o — issuer, tax ID, amount, date, service description
+4. **Uploads** the organized PDFs to Google Drive
+5. **Logs** the extracted data as a row in a Google Sheets spreadsheet
+6. **Batch processing** — handles multiple invoices in the same email
+
+### Use case
+Ideal for accounting firms, finance departments and small businesses that receive invoices by email and need to log them manually. Eliminates hours of repetitive work.
+
+## 🏗️ Architecture
+
+```
+Gmail Trigger (polling — checks for new emails)
+        │
+        ▼
+   Has PDF attachment? ──── No ──── End
+        │ Yes
+        ▼
+   Split Out (1 attachment at a time)
+        │
+        ▼
+   Loop Over Items
+   ├── Extract from File (reads the PDF)
+   ├── AI Agent GPT-4o (extracts structured invoice data)
+   │   └── fields: issuer, tax ID, amount, date, items
+   ├── Upload to Google Drive (organized PDF file)
+   └── Append Row to Google Sheets (invoice data)
+        │
+        ▼
+   Merge (consolidates results)
+```
+
+## 🔧 Integrations
+
+| Service | Use |
+|---|---|
+| **Gmail** | Reading trigger + attachment download |
+| **OpenAI GPT-4o** | Structured data extraction from the PDF |
+| **Google Drive** | Organized storage of the PDF files |
+| **Google Sheets** | Tabular log of all processed invoices |
+
+## 📊 Workflow metrics
+
+| Metric | Value |
+|---|---|
+| Total nodes | 14 |
+| Processing | Batch (multiple invoices per email) |
+| LLM model | GPT-4o (configurable) |
+| Output | Drive (PDF) + Sheets (data) |
+
+</details>
+
+---
+
+[← Back to profile](https://github.com/Dimitrearaujo)
